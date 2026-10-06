@@ -1,0 +1,15 @@
+24/09/26, 11:00 am - Riya: Hey! Landing page ka hero section mobile pe toota hua hai
+24/09/26, 11:20 am - Aarav Mehta: Oh damn. I'll push a fix tonight
+24/09/26, 11:21 am - Riya: Thanks 🙏 I'll share the new Figma for the pricing page by Wednesday
+25/09/26, 9:10 am - Aarav Mehta: Pushed the fix, check once
+25/09/26, 9:30 am - Riya: Looks good on my phone 👌
+26/09/26, 5:00 pm - Riya: Btw did you see the new Linear update? Kinda cool
+26/09/26, 5:05 pm - Aarav Mehta: Yeah the AI triage thing is neat
+26/09/26, 5:06 pm - Riya: We should add analytics sometime
+30/09/26, 12:00 pm - Riya: Here's the pricing Figma https://figma.com/file/abc123pricing
+30/09/26, 12:15 pm - Aarav Mehta: Looks great. I'll build it out by Friday next week
+30/09/26, 12:16 pm - Riya: 🙌
+06/10/26, 8:00 pm - Riya: My cousin wants to try the app, can I give her your number? It's 98860 44321 right?
+06/10/26, 8:10 pm - Aarav Mehta: Yes go ahead
+08/10/26, 11:00 am - Riya: How's the pricing page coming along?
+08/10/26, 11:30 am - Aarav Mehta: Halfway there, will have it done by tomorrow evening

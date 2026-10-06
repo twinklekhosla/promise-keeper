@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promise Keeper · live demo</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --ink: #1d1d1b; --muted: #6b6a64; --line: #e4e2da;
+    --late: #c2410c; --late-bg: #fdeee6; --soon: #a16207; --soon-bg: #fdf6dc;
+    --ok: #15803d; --ok-bg: #e7f5ec; --accent: #1f4e79; --accent-bg: #e8eff6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --card: #1f1f1d; --ink: #ecebe6; --muted: #9c9a92; --line: #33322e;
+      --late: #fb923c; --late-bg: #3a2216; --soon: #facc15; --soon-bg: #37300f;
+      --ok: #4ade80; --ok-bg: #16301f; --accent: #7fb2e5; --accent-bg: #1c2a38;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 16px 60px; }
+  header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .btn { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+         border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .privacy { margin: 14px 0 16px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px;
+             background: var(--card); font-size: 13px; color: var(--muted); }
+  .privacy b { color: var(--ink); font-weight: 600; }
+  .job { margin: 0 0 16px; padding: 10px 14px; border-radius: 10px; background: var(--accent-bg); color: var(--ink);
+         font-size: 13px; display: none; }
+  .job.err { background: var(--late-bg); color: var(--late); }
+  .askbox { display: flex; gap: 8px; margin-bottom: 12px; }
+  .askbox input { flex: 1; font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line);
+                  background: var(--card); color: var(--ink); }
+  .answer { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 16px; font-size: 14px; white-space: pre-wrap; display: none; }
+  .answer .ref { display: inline-block; font-size: 11.5px; background: var(--accent-bg); color: var(--accent); border-radius: 6px;
+                 padding: 0 6px; cursor: pointer; }
+  .card.flash { outline: 2px solid var(--accent); }
+  .answer .tools { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--muted); white-space: normal; }
+  .answer .tools code { background: var(--accent-bg); color: var(--accent); border-radius: 5px; padding: 1px 6px; margin-right: 4px;
+                        font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .chip.money b { color: var(--ok); }
+  #examples a { color: var(--accent); }
+  .summary { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .chip { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; min-width: 150px; }
+  .chip b { display: block; font-size: 22px; line-height: 1.1; }
+  .chip span { color: var(--muted); font-size: 12.5px; }
+  .chip.late b { color: var(--late); } .chip.soon b { color: var(--soon); }
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tabs button { border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 999px;
+                 padding: 5px 14px; cursor: pointer; font: inherit; font-size: 13px; }
+  .tabs button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+  h2 { font-size: 15px; margin: 0 0 10px; display: flex; gap: 8px; align-items: center; }
+  h2 .n { color: var(--muted); font-weight: 400; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 15px; margin-bottom: 12px; }
+  .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .what { font-weight: 600; }
+  .who { color: var(--muted); font-size: 13px; }
+  .badge { font-size: 12px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; background: var(--bg); color: var(--muted); }
+  .badge.late { background: var(--late-bg); color: var(--late); font-weight: 600; }
+  .badge.soon { background: var(--soon-bg); color: var(--soon); font-weight: 600; }
+  .badge.done { background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+  .quote { margin: 10px 0 0; padding-left: 10px; border-left: 2px solid var(--line); color: var(--muted); font-size: 13px; font-style: italic; }
+  .src { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .note { font-size: 12px; color: var(--ok); margin-top: 6px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .actions button { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+                    border-radius: 7px; padding: 4px 10px; cursor: pointer; }
+  .actions button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .actions button.quiet { color: var(--muted); border-color: transparent; }
+  .empty { color: var(--muted); font-size: 13px; padding: 10px 2px; }
+  .welcome { background: var(--card); border: 2px dashed var(--line); border-radius: 14px; padding: 28px; text-align: center; }
+  .welcome h2 { justify-content: center; font-size: 18px; }
+  .welcome ol { text-align: left; max-width: 520px; margin: 14px auto; color: var(--muted); font-size: 14px; }
+  .welcome ol b { color: var(--ink); }
+  .drop { position: fixed; inset: 0; background: rgba(31, 78, 121, .15); border: 3px dashed var(--accent);
+          display: none; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; color: var(--accent); z-index: 9; }
+  .drop.on { display: flex; }
+  .ask { background: var(--soon-bg); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
+  .ask input { font: inherit; padding: 5px 8px; border-radius: 7px; border: 1px solid var(--line); margin: 0 6px; }
+  dialog { border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); width: min(520px, 92vw); padding: 18px; }
+  dialog::backdrop { background: rgba(0,0,0,.35); }
+  dialog textarea { width: 100%; min-height: 130px; font: inherit; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
+                    background: var(--bg); color: var(--ink); resize: vertical; }
+  dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+  dialog button { font: inherit; border-radius: 8px; padding: 6px 14px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  dialog button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="drop" id="drop">Drop your WhatsApp exports or emails</div>
+<div class="wrap">
+  <header>
+    <div><h1>Promise Keeper</h1><span class="sub" id="today"></span></div>
+    <div class="bar">
+      <input type="file" id="file" multiple accept=".txt,.zip,.eml,.mbox" hidden>
+      <button class="btn" onclick="file.click()">Add chats</button>
+      <button class="btn" id="scanbtn" onclick="scanNow()">Scan now</button>
+    </div>
+  </header>
+  <div class="privacy" id="privacy"></div>
+  <div class="job" id="job"></div>
+  <form class="askbox" id="askform"><input id="q" placeholder="Ask anything: who owes me money? maine Maa ko kya bola tha?" autocomplete="off">
+    <button class="btn primary">Ask</button></form>
+  <div class="answer" id="answer"></div>
+  <div id="examples" class="sub" style="margin:-4px 0 14px"></div>
+  <div id="ask"></div>
+  <div id="main"></div>
+</div>
+
+<dialog id="dlg">
+  <div class="who" id="dlg-title"></div>
+  <p style="margin:6px 0 10px;font-weight:600">Suggested message</p>
+  <textarea id="dlg-text"></textarea>
+  <div class="row">
+    <button onclick="dlg.close()">Close</button>
+    <button id="copy">Copy</button>
+    <button class="primary" id="send-mail" hidden>Open in Mail</button>
+    <button class="primary" id="send-wa" hidden>Open in WhatsApp</button>
+  </div>
+</dialog>
+
+<script>window.STATIC = {"state": {"today": "2026-10-09", "me": "Aarav Mehta", "commitments": [{"id": 33, "message_id": "b68537ed676448dc", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "me", "counterparty": "Kabir", "what": "Call the agency to ask for a replacement maid", "due": "2026-09-22", "quote": "I'll call the agency tomorrow and ask for someone", "status": "done", "status_note": "Called agency, trial Saturday", "status_message_id": "f98519ec257266c1", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-21T21:10:00", "checked_until": "2026-09-21T21:10:00", "source_text": "I'll call the agency tomorrow and ask for someone", "source_sender": "Aarav Mehta"}, {"id": 38, "message_id": "0b982a28f7472211", "thread": "Riya", "source": "whatsapp", "owner": "me", "counterparty": "Riya", "what": "Push a fix for hero section on landing page", "due": "2026-09-24", "quote": "Oh damn. I'll push a fix tonight", "status": "done", "status_note": "Pushed fix, asked to check", "status_message_id": "193c8d25250e4788", "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-09-24T11:20:00", "checked_until": "2026-09-24T11:20:00", "source_text": "Oh damn. I'll push a fix tonight", "source_sender": "Aarav Mehta"}, {"id": 28, "message_id": "ce200253756243ea", "thread": "Mehta Family", "source": "whatsapp", "owner": "me", "counterparty": "Papa", "what": "Come on Saturday and fix router", "due": "2026-09-26", "quote": "Papa, restart it once. If it still doesn't work, I'll come on Saturday and fix it", "status": "done", "status_note": "Router fixed Saturday", "status_message_id": "bf020590dde09155", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-22T19:45:00", "checked_until": "2026-09-22T19:45:00", "source_text": "Papa, restart it once. If it still doesn't work, I'll come on Saturday and fix it", "source_sender": "Aarav Mehta"}, {"id": 41, "message_id": "3902aa4f7141230f", "thread": "Sameer", "source": "whatsapp", "owner": "me", "counterparty": "Sameer", "what": "Return Sameer's book (Sapiens)", "due": "2026-09-27", "quote": "Oh right, I'll give it back on Sunday when we meet, promise", "status": "done", "status_note": "Sameer confirmed receipt", "status_message_id": "26dda8fd2941ec21", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-20T22:10:00", "checked_until": "2026-09-20T22:10:00", "source_text": "Oh right, I'll give it back on Sunday when we meet, promise", "source_sender": "Aarav Mehta"}, {"id": 25, "message_id": "a8918f49595bb473", "thread": "College Gang", "source": "whatsapp", "owner": "them", "counterparty": "Neel", "what": "Send the pics", "due": "2026-09-27", "quote": "That was fun 😂 I'll send you guys the pics tomorrow", "status": "done", "status_note": "Pics sent from last night", "status_message_id": "eb97f7e12c909bfe", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-26T23:45:00", "checked_until": "2026-09-26T23:45:00", "source_text": "That was fun 😂 I'll send you guys the pics tomorrow", "source_sender": "Neel"}, {"id": 29, "message_id": "56051629846effb0", "thread": "Mehta Family", "source": "whatsapp", "owner": "them", "counterparty": "Maa", "what": "Send laddoo via courier", "due": "2026-09-28", "quote": "Laddoo bana rahi hoon. Aarav tere liye courier se bhejungi, Monday tak pahunch jayenge", "status": "done", "status_note": "Laddoos arrived Monday", "status_message_id": "283ed94e4d0b2b55", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-24T13:15:00", "checked_until": "2026-09-24T13:15:00", "source_text": "Laddoo bana rahi hoon. Aarav tere liye courier se bhejungi, Monday tak pahunch jayenge", "source_sender": "Maa"}, {"id": 42, "message_id": "55f9d4f9f202f337", "thread": "Sameer", "source": "whatsapp", "owner": "me", "counterparty": "Sameer", "what": "Intro Sameer to Karthik (payments engineer)", "due": "2026-09-28", "quote": "Sure, I'll intro you to Karthik this week", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-09-24T21:10:00", "checked_until": "2026-10-03T22:07:00", "source_text": "Sure, I'll intro you to Karthik this week", "source_sender": "Aarav Mehta"}, {"id": 44, "message_id": "d96cacf56a2a15ab", "thread": "Urban Fixit", "source": "whatsapp", "owner": "them", "counterparty": "Urban Fixit", "what": "Visit for AC service", "due": "2026-09-29", "quote": "Hi Aarav! Our technician will visit tomorrow between 10am and 12pm 😊", "status": "done", "status_note": "Technician completed service", "status_message_id": "7cd19a9e43d85582", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-26T10:05:00", "checked_until": "2026-09-26T10:05:00", "source_text": "Hi Aarav! Our technician will visit tomorrow between 10am and 12pm 😊", "source_sender": "Urban Fixit"}, {"id": 30, "message_id": "2df0359e92004268", "thread": "Mehta Family", "source": "whatsapp", "owner": "me", "counterparty": "Ishita", "what": "Send Netflix password", "due": "2026-09-29", "quote": "Haan kal bhejta hoon, abhi laptop pe nahi hoon", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-28T21:15:00", "checked_until": "2026-10-08T07:01:00", "source_text": "Haan kal bhejta hoon, abhi laptop pe nahi hoon", "source_sender": "Aarav Mehta"}, {"id": 39, "message_id": "d0d8b9fdf1990092", "thread": "Riya", "source": "whatsapp", "owner": "them", "counterparty": "Riya", "what": "Share the new Figma for the pricing page", "due": "2026-09-30", "quote": "Thanks 🙏 I'll share the new Figma for the pricing page by Wednesday", "status": "done", "status_note": "Shared Figma link on due date", "status_message_id": "0af8eea4c16a6808", "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-09-24T11:21:00", "checked_until": "2026-09-24T11:21:00", "source_text": "Thanks 🙏 I'll share the new Figma for the pricing page by Wednesday", "source_sender": "Riya"}, {"id": 36, "message_id": "6a4472f695a61f9c", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "them", "counterparty": "Kabir", "what": "Return the drill", "due": "2026-10-04", "quote": "Bro I'm borrowing your drill for the weekend, will return it Sunday", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-29T22:30:00", "checked_until": "2026-10-07T23:21:00", "source_text": "Bro I'm borrowing your drill for the weekend, will return it Sunday", "source_sender": "Kabir"}, {"id": 27, "message_id": "4ad6cda81bfde070", "thread": "College Gang", "source": "whatsapp", "owner": "me", "counterparty": "College Gang", "what": "Check Coldplay tribute prices", "due": "2026-10-05", "quote": "Me! I'll check prices and let you guys know by Monday", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-10-03T22:05:00", "checked_until": "2026-10-07T09:05:00", "source_text": "Me! I'll check prices and let you guys know by Monday", "source_sender": "Aarav Mehta"}, {"id": 37, "message_id": "9e30d746cdc13f1c", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "them", "counterparty": "Kabir", "what": "Wake me up at 6 AM", "due": "2026-10-05", "quote": "Gym from tomorrow, I'll wake you up at 6", "status": "done", "status_note": "Woke up at 6:15", "status_message_id": "817867186d450627", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-10-04T21:00:00", "checked_until": "2026-10-04T21:00:00", "source_text": "Gym from tomorrow, I'll wake you up at 6", "source_sender": "Kabir"}, {"id": 45, "message_id": "1e6bffb437b1754b", "thread": "Urban Fixit", "source": "whatsapp", "owner": "them", "counterparty": "Urban Fixit", "what": "Refund of ₹499 credited", "due": "2026-10-06", "quote": "Also, the refund of ₹499 for the delay will be credited in 5-7 working days", "status": "open", "status_note": null, "status_message_id": null, "amount": 499.0, "currency": "INR", "weight": "high", "snooze_until": null, "created_ts": "2026-09-27T14:05:00", "checked_until": "2026-10-08T18:00:00", "source_text": "Also, the refund of ₹499 for the delay will be credited in 5-7 working days", "source_sender": "Urban Fixit"}, {"id": 26, "message_id": "c384ec86ee502641", "thread": "College Gang", "source": "whatsapp", "owner": "them", "counterparty": "Varun", "what": "Pay me back ₹1,200", "due": "2026-10-07", "quote": "Aarav, about the ₹1,200 for the concert tickets, I'll pay you back after salary on the 1st", "status": "open", "status_note": null, "status_message_id": null, "amount": 1200.0, "currency": "INR", "weight": "high", "snooze_until": null, "created_ts": "2026-09-28T21:10:00", "checked_until": "2026-10-07T09:05:00", "source_text": "Aarav, about the ₹1,200 for the concert tickets, I'll pay you back after salary on the 1st", "source_sender": "Varun"}, {"id": 40, "message_id": "2040a129003a0751", "thread": "Riya", "source": "whatsapp", "owner": "me", "counterparty": "Riya", "what": "Build out the pricing page", "due": "2026-10-09", "quote": "Looks great. I'll build it out by Friday next week", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-09-30T12:15:00", "checked_until": "2026-10-08T11:30:00", "source_text": "Looks great. I'll build it out by Friday next week", "source_sender": "Aarav Mehta"}, {"id": 31, "message_id": "6a9cbe63dc63d279", "thread": "Mehta Family", "source": "whatsapp", "owner": "me", "counterparty": "Maa", "what": "Book Diwali tickets", "due": "2026-10-10", "quote": "Is weekend kar dunga maa, pakka", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-10-05T21:00:00", "checked_until": "2026-10-08T07:01:00", "source_text": "Is weekend kar dunga maa, pakka", "source_sender": "Aarav Mehta"}, {"id": 46, "message_id": "0c1166526c5b0fdd", "thread": "Email: Your order has shipped", "source": "email", "owner": "them", "counterparty": "ShopKart", "what": "Deliver order SK88231", "due": "2026-10-12", "quote": "Hi Aarav,\n\nGood news! Your order SK88231 has shipped and will be delivered by 12 October.\n\nTeam ShopKart", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-10-06T09:00:00", "checked_until": "2026-10-06T09:00:00", "source_text": "Hi Aarav,\n\nGood news! Your order SK88231 has shipped and will be delivered by 12 October.\n\nTeam ShopKart", "source_sender": "ShopKart"}, {"id": 32, "message_id": "4a47d75c7633785c", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "me", "counterparty": "Kabir", "what": "Get milk", "due": null, "quote": "I'll get it on the way back", "status": "done", "status_note": "You got milk", "status_message_id": "7189efd1c1645dfc", "amount": null, "currency": null, "weight": "low", "snooze_until": null, "created_ts": "2026-09-20T08:12:00", "checked_until": "2026-09-20T08:12:00", "source_text": "I'll get it on the way back", "source_sender": "Aarav Mehta"}, {"id": 34, "message_id": "839c24be88cd644a", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "them", "counterparty": "Kabir", "what": "Pay the electricity bill", "due": null, "quote": "Electricity bill is here, ₹3,480. I'll pay it this week, you transfer your half to me", "status": "done", "status_note": "Kabir paid bill", "status_message_id": "ea65699219338c84", "amount": null, "currency": null, "weight": "high", "snooze_until": null, "created_ts": "2026-09-23T22:00:00", "checked_until": "2026-09-23T22:00:00", "source_text": "Electricity bill is here, ₹3,480. I'll pay it this week, you transfer your half to me", "source_sender": "Kabir"}, {"id": 35, "message_id": "95f5b934da09b665", "thread": "Kabir Flatmate", "source": "whatsapp", "owner": "me", "counterparty": "Kabir", "what": "Transfer my half of the electricity bill to Kabir", "due": null, "quote": "Cool, will transfer my half once you pay", "status": "done", "status_note": "Sent half via GPay", "status_message_id": "7c0253210f427df6", "amount": 1740.0, "currency": "INR", "weight": "high", "snooze_until": null, "created_ts": "2026-09-23T22:05:00", "checked_until": "2026-09-23T22:05:00", "source_text": "Cool, will transfer my half once you pay", "source_sender": "Aarav Mehta"}, {"id": 24, "message_id": "77206e4cf1923508", "thread": "College Gang", "source": "whatsapp", "owner": "me", "counterparty": "College Gang", "what": "Book a table for 6 at 8pm", "due": null, "quote": "I'll book a table for 6 at 8pm", "status": "done", "status_note": "Table booked under Aarav", "status_message_id": "8019cda26c65ca53", "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-09-25T23:08:00", "checked_until": "2026-09-25T23:08:00", "source_text": "I'll book a table for 6 at 8pm", "source_sender": "Aarav Mehta"}, {"id": 43, "message_id": "a5a096c8d23bcc88", "thread": "Sameer", "source": "whatsapp", "owner": "them", "counterparty": "Sameer", "what": "Call me to discuss startup", "due": null, "quote": "Will call you this weekend, lots to discuss about the startup", "status": "open", "status_note": null, "status_message_id": null, "amount": null, "currency": null, "weight": "normal", "snooze_until": null, "created_ts": "2026-10-03T22:06:00", "checked_until": "2026-10-03T22:07:00", "source_text": "Will call you this weekend, lots to discuss about the startup", "source_sender": "Sameer"}], "digest": "You promised, and it's late:\n  • Intro Sameer to Karthik (payments engineer) for Sameer (11d late)\n  • Send Netflix password for Ishita (10d late)\n  • Check Coldplay tribute prices for College Gang (4d late)\nComing up:\n  • Build out the pricing page for Riya (due 2026-10-09)\n  • Book Diwali tickets for Maa (due 2026-10-10)\nOthers promised you, and it's late:\n  • Kabir: Return the drill (5d late)\n  • Urban Fixit: Refund of ₹499 credited (3d late)\n  • Varun: Pay me back ₹1,200 (2d late)", "counts": {"i_owe_overdue": 3, "i_owe_soon": 2, "owed_to_me_overdue": 3, "no_date_stale": 0}, "messages": 145, "sent_to_model": 89, "spent_usd": 0.0538, "budget_usd": 3.0, "job": {"running": false}, "money": {"owed_to_me": {"INR": 1699.0}, "i_owe": {}}}, "drafts": {"42": "Hey Sameer, sorry for the delay—I’ll intro you to Karthik by tomorrow evening (Oct 10) at the latest. Let me know if that works for you.", "30": "Hey Ishita, sorry for the delay—got caught up. I'll send the Netflix password tonight by 9 pm latest. Let me know if you need it sooner.", "36": "Hey Kabir, just checking – did you get a chance to drop off my drill? I need it back for a small project this week. Let me know when you can bring it by. Thanks!", "27": "Hey gang, sorry I missed checking the Coldplay tribute prices by Monday. Got tied up—will share the details by end of day tomorrow (Sat). Thanks for hanging tight!", "45": "Hey Urban Fixit team, just checking on the ₹499 refund you mentioned would be credited in 5‑7 working days – today’s already the 9th and I haven’t seen it. Could you please confirm when it’ll hit my account? Thanks!", "26": "Hey Varun, just checking—did the ₹1,200 go through? If you need another day, let me know. Thanks!", "40": "Hey Riya, pricing page is ready on staging — just running final checks. Will drop the link here in the next 10‑15 mins. Let me know if you spot anything!", "31": "Maa, ticket booking process start kar diya hai, kal subah tak confirm ho jayega. Thoda intezaar.", "46": "Hey ShopKart team, just checking in on my order SK88231 – any update on the delivery? Thanks!", "43": "Hey Sameer, just checking in—did you get a chance to think about the startup chat? No pressure, let me know when you're free to catch up."}, "reply_to": {"46": "orders%40shopkart.example"}, "answers": [{"q": "Who owes me money?", "a": "- Urban Fixit owes ₹499 (refund) – due 2026‑10‑06, 3 days late [#45]  \n- Varun owes ₹1,200 – due 2026‑10‑07, 2 days late [#26]", "tools": [{"tool": "find_promises", "args": {"owner": "them", "status": "open", "only_money": true}}]}, {"q": "What's late from my side?", "a": "- Intro Sameer to Karthik (payments engineer) – due 2026‑09‑28, **11 days late** [#42]  \n- Send Netflix password – due 2026‑09‑29, **10 days late** [#30]  \n- Check Coldplay tribute prices – due 2026‑10‑05, **4 days late** [#27]", "tools": [{"tool": "find_promises", "args": {"owner": "me", "only_late": true}}]}, {"q": "Did Kabir return my drill?", "a": "No – Kabir still has your drill. He was supposed to return it on Oct 4, which is now **5 days late** ([#36]).", "tools": [{"tool": "find_promises", "args": {"owner": "them", "person": "Kabir", "status": "any"}}]}, {"q": "Maa ko kya promise kiya tha?", "a": "Maa ko tumne “Diwali tickets book karna” promise kiya tha — [#31]. Due date 10 Oct 2026 (kal), abhi tak late nahi hai.", "tools": [{"tool": "find_promises", "args": {"owner": "me", "person": "Maa"}}]}]};</script>
+<script>
+let state = null, show = "open", polling = null, needsName = false, notice = "", showMinor = false;
+const visible = c => showMinor || c.weight !== "low";
+// Static demo mode (GitHub Pages): window.STATIC holds a snapshot, pre-written drafts and example answers.
+const DEMO = window.STATIC || null;
+const $ = id => document.getElementById(id);
+const dlg = $("dlg"), file = $("file");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dayDiff = (a, b) => Math.round((new Date(a) - new Date(b)) / 86400000);
+const TABS = [["open", "Open"], ["done", "Kept"], ["dropped", "Dropped"], ["expired", "Old"]];
+
+function badge(c) {
+  if (c.status === "done") return '<span class="badge done">kept</span>';
+  if (c.status === "dropped") return '<span class="badge">dropped</span>';
+  if (c.status === "expired") return '<span class="badge">went quiet</span>';
+  if (!c.due) return '<span class="badge">no date</span>';
+  const d = dayDiff(c.due, state.today);
+  if (d < 0) return `<span class="badge late">${-d} day${d === -1 ? "" : "s"} late</span>`;
+  if (d === 0) return '<span class="badge soon">due today</span>';
+  if (d <= 3) return `<span class="badge soon">due in ${d} day${d === 1 ? "" : "s"}</span>`;
+  return `<span class="badge">due ${c.due}</span>`;
+}
+
+function card(c) {
+  const src = c.source === "email" ? "Email" : "WhatsApp";
+  const who = c.owner === "me" ? `to ${esc(c.counterparty)}` : `from ${esc(c.counterparty)}`;
+  const acts = c.status === "open" ? `
+    <div class="actions">
+      <button class="primary" onclick="draft(${c.id})">${c.owner === "me" ? "Draft update" : "Draft reminder"}</button>
+      <button onclick="setStatus(${c.id}, 'done')">Mark kept</button>
+      <button onclick="snooze(${c.id})">Snooze 2 days</button>
+      <button onclick="setStatus(${c.id}, 'dropped')">Drop</button>
+      <button class="quiet" title="Hide it, and skip similar lines in future" onclick="setStatus(${c.id}, 'dismissed')">Not a promise</button>
+    </div>` : `<div class="actions"><button onclick="setStatus(${c.id}, 'open')">Reopen</button></div>`;
+  return `<div class="card" id="c${c.id}">
+    <div class="top"><div><div class="what">${esc(c.what)}</div><div class="who">${who}</div></div>${badge(c)}</div>
+    ${c.quote ? `<div class="quote">“${esc(c.quote)}”</div>` : ""}
+    <div class="src">${src} · ${esc(c.thread)} · said ${esc(c.created_ts.slice(0, 10))}</div>
+    ${c.status_note ? `<div class="note">${esc(c.status_note)}</div>` : ""}
+    ${acts}
+  </div>`;
+}
+
+const SYMBOL = {INR: "₹", USD: "$", EUR: "€", GBP: "£"};
+function money(totals, label) {
+  const parts = Object.entries(totals || {}).map(([cur, n]) => `${SYMBOL[cur] || cur + " "}${Math.round(n).toLocaleString("en-IN")}`);
+  return parts.length ? `<div class="chip money"><b>${parts.join(" + ")}</b><span>${label}</span></div>` : "";
+}
+
+function welcome() {
+  return `<div class="welcome">
+    <h2>Add your chats to get started</h2>
+    <ol>
+      <li>In WhatsApp, open a chat → <b>⋮ / contact name → Export chat → Without media</b>. Do this for the chats that matter.</li>
+      <li>Drop the files here (<b>.txt</b> from Android, <b>.zip</b> from iPhone). Email works too: <b>.eml</b> or a Gmail Takeout <b>.mbox</b>.</li>
+      <li>Promise Keeper finds the promises and keeps watching them. Re-drop a chat any time to update it.</li>
+    </ol>
+    <button class="btn primary" onclick="file.click()">Choose files</button>
+    <p class="sub" style="margin-top:14px">Files stay on this Mac. Only promise-like lines, with contact details masked, are sent to the AI.</p>
+  </div>`;
+}
+
+function renderDemoBits() {
+  if (!DEMO) return;
+  $("examples").innerHTML = "Try: " + DEMO.answers.map((a, i) =>
+    `<a href="#" onclick="$('q').value=${esc(JSON.stringify(a.q))};$('askform').requestSubmit();return false">${esc(a.q)}</a>`).join(" · ");
+  if (!$("demobanner")) {
+    const b = document.createElement("div");
+    b.id = "demobanner"; b.className = "ask";
+    b.innerHTML = "<b>Live demo</b> with a made-up inbox for a fictional person (Aarav, Bengaluru): " + state.messages +
+      " WhatsApp and email messages, mostly everyday noise, in English with some Hinglish. Everything shown was found " +
+      "and written by NVIDIA Nemotron on Nebius Token Factory. Clicks work but aren't saved; to use your own chats, run it locally.";
+    document.querySelector(".wrap").insertBefore(b, $("privacy"));
+  }
+}
+
+function render() {
+  renderDemoBits();
+  $("today").textContent = state.me ? `${state.me} · today ${state.today}` : `today ${state.today}`;
+  $("privacy").innerHTML = DEMO
+    ? `<b>${state.messages}</b> messages · <b>${state.sent_to_model}</b> sent to NVIDIA Nemotron (promise-like lines and their ` +
+      `neighbours, with phone numbers, emails, links and account numbers masked) · a full scan of this inbox costs about <b>$0.05</b>`
+    : state.messages
+    ? `<b>${state.messages}</b> messages read on this Mac · <b>${state.sent_to_model}</b> sent to NVIDIA Nemotron ` +
+      `(promise-like lines and their neighbours, with phone numbers, emails, links and account numbers masked) · ` +
+      `spend <b>$${state.spent_usd.toFixed(3)}</b> of $${state.budget_usd.toFixed(2)} cap`
+    : "Nothing imported yet. Everything you add stays on this Mac.";
+  renderJob();
+  $("ask").innerHTML = needsName ? `<div class="ask">Which sender is you in these chats?
+      <input id="myname" placeholder="Your name as shown in WhatsApp"> <button class="btn primary" onclick="saveName()">Save</button></div>`
+    : notice ? `<div class="ask">${notice} <button class="btn" onclick="notice=''; render()">OK</button></div>` : "";
+  if (!state.messages) { $("main").innerHTML = welcome(); return; }
+
+  const count = s => state.commitments.filter(c => c.status === s && visible(c)).length;
+  const minor = state.commitments.filter(c => c.weight === "low" && c.status === show).length;
+  const tabs = TABS.map(([s, label]) =>
+    `<button data-s="${s}" class="${s === show ? "on" : ""}">${label} ${count(s) ? `(${count(s)})` : ""}</button>`).join("");
+  const col = owner => {
+    const list = state.commitments.filter(c => c.owner === owner && c.status === show && visible(c));
+    return [list.length, list.map(card).join("") || '<div class="empty">Nothing here.</div>'];
+  };
+  const [nMe, me] = col("me"), [nThem, them] = col("them");
+  const k = state.counts;
+  const chip = (n, label, cls) => `<div class="chip ${n ? cls : ""}"><b>${n}</b><span>${label}</span></div>`;
+  $("main").innerHTML = `
+    <div class="summary">
+      ${chip(k.i_owe_overdue, "you promised, now late", "late")}
+      ${chip(k.i_owe_soon, "you promised, due in 3 days", "soon")}
+      ${chip(k.owed_to_me_overdue, "others owe you, late", "late")}
+      ${chip(k.no_date_stale, "no date, open a week+", "")}
+      ${money(state.money.owed_to_me, "owed to you")}${money(state.money.i_owe, "you owe")}
+    </div>
+    <div class="tabs" id="tabs">${tabs}${minor ? `<button data-minor="1" class="${showMinor ? "on" : ""}"
+      title="Tiny household things (make kebabs, come today) are hidden and never nag">${showMinor ? "Hide" : "Show"} minor (${minor})</button>` : ""}</div>
+    <div class="cols">
+      <section><h2>I promised <span class="n">${nMe}</span></h2>${me}</section>
+      <section><h2>Promised to me <span class="n">${nThem}</span></h2>${them}</section>
+    </div>`;
+  $("tabs").onclick = e => {
+    if (e.target.dataset.minor) { showMinor = !showMinor; render(); }
+    else if (e.target.dataset.s) { show = e.target.dataset.s; render(); }
+  };
+}
+
+function renderJob() {
+  const j = state.job || {}, el = $("job");
+  $("scanbtn").disabled = !!j.running;
+  if (j.running) {
+    el.className = "job"; el.style.display = "block";
+    el.textContent = `${j.stage || "Working"}… ${j.total ? `${j.done}/${j.total} chats` : ""}`;
+  } else if (j.error) {
+    el.className = "job err"; el.style.display = "block"; el.textContent = j.error;
+  } else { el.style.display = "none"; }
+}
+
+function recount() {
+  // Same grouping as the server's digest, for the static demo where clicks change the snapshot.
+  const t = state.today, soon = new Date(new Date(t).getTime() + 3 * 864e5).toISOString().slice(0, 10);
+  const stale = new Date(new Date(t).getTime() - 7 * 864e5).toISOString().slice(0, 10);
+  const open = state.commitments.filter(c => c.status === "open" && c.weight !== "low");
+  state.counts = {
+    i_owe_overdue: open.filter(c => c.owner === "me" && c.due && c.due < t).length,
+    i_owe_soon: open.filter(c => c.owner === "me" && c.due && c.due >= t && c.due <= soon).length,
+    owed_to_me_overdue: open.filter(c => c.owner === "them" && c.due && c.due < t).length,
+    no_date_stale: open.filter(c => !c.due && c.created_ts.slice(0, 10) <= stale).length,
+  };
+  state.money = {owed_to_me: {}, i_owe: {}};
+  for (const c of open.filter(c => c.amount)) {
+    const side = c.owner === "them" ? "owed_to_me" : "i_owe", cur = c.currency || "INR";
+    state.money[side][cur] = (state.money[side][cur] || 0) + c.amount;
+  }
+}
+
+function demoApi(url, body) {
+  const id = +(url.match(/commitments\/(\d+)/) || [])[1];
+  const c = state.commitments.find(x => x.id === id);
+  if (url.endsWith("/status")) { c.status = body.status; if (body.status !== "open") c.status_note = "marked by you (demo)"; recount(); return {}; }
+  if (url.endsWith("/snooze")) { notice = "Snoozed for 2 days. In this demo nothing is saved."; return {}; }
+  if (url.endsWith("/draft")) {
+    const text = DEMO.drafts[id] || "In the full app, Nemotron writes this follow-up in the chat's own tone.";
+    return {message: text, links: DEMO.reply_to[id] ? {email: `mailto:${encodeURIComponent(DEMO.reply_to[id])}?subject=${encodeURIComponent("Re: " + c.thread.replace(/^Email: /, ""))}&body=`} : {}};
+  }
+  if (url === "/api/ask") {
+    const words = s => new Set(s.toLowerCase().match(/[a-z]{3,}/g) || []);
+    const q = words(body.question);
+    let best = null, score = 0;
+    for (const a of DEMO.answers) {
+      const n = [...words(a.q)].filter(w => q.has(w)).length;
+      if (n > score) { best = a; score = n; }
+    }
+    if (score >= 2 || (best && score === words(best.q).size)) return {answer: best.a, tools: best.tools};
+    return {answer: "This read-only demo only has answers for the example questions above. Run Promise Keeper locally and it answers anything about your own chats."};
+  }
+  notice = "This is a read-only demo with a made-up inbox. Run Promise Keeper locally to add your own chats.";
+  return {};
+}
+
+async function load() {
+  if (DEMO) {
+    if (!state) { state = JSON.parse(JSON.stringify(DEMO.state)); recount(); }
+    render();
+    return;
+  }
+  state = await (await fetch("/api/state")).json();
+  render();
+  if (state.job && state.job.running && !polling) {
+    polling = setInterval(async () => {
+      state = await (await fetch("/api/state")).json();
+      if (!state.job.running) { clearInterval(polling); polling = null; render(); } else renderJob();
+    }, 1500);
+  }
+}
+async function post(url, body) {
+  if (DEMO) { const out = demoApi(url, body || {}); if (notice) render(); return out; }
+  const r = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body || {})});
+  if (!r.ok) throw new Error((await r.json()).detail || r.statusText);
+  return r.json();
+}
+async function setStatus(id, status) { await post(`/api/commitments/${id}/status`, {status}); load(); }
+async function snooze(id) { await post(`/api/commitments/${id}/snooze`, {days: 2}); load(); }
+async function scanNow() { await post("/api/scan"); load(); }
+async function saveName() {
+  const name = $("myname").value.trim();
+  if (!name) return;
+  needsName = false;
+  await post("/api/me", {name}); load();
+}
+async function upload(files) {
+  if (!files.length) return;
+  if (DEMO) { demoApi("/api/import", {}); render(); return; }
+  const form = new FormData();
+  for (const f of files) form.append("files", f);
+  const el = $("job");
+  el.className = "job"; el.style.display = "block"; el.textContent = `Importing ${files.length} file${files.length > 1 ? "s" : ""}…`;
+  const r = await fetch("/api/import", {method: "POST", body: form});
+  const out = await r.json();
+  if (!r.ok) { el.className = "job err"; el.textContent = out.detail || "Import failed"; return; }
+  needsName = !!out.needs_name;
+  notice = out.me ? `Recognised you as <b>${esc(out.me)}</b> from your one-to-one chats. Imported ${out.added} new messages.`
+                  : out.added !== undefined ? `Imported ${out.added} new messages.` : "";
+  load();
+}
+async function draft(id) {
+  const c = state.commitments.find(x => x.id === id);
+  $("dlg-title").textContent = `${c.what} · ${c.counterparty}`;
+  const box = $("dlg-text");
+  box.value = "Writing with Nemotron…";
+  dlg.showModal();
+  $("send-wa").hidden = $("send-mail").hidden = true;
+  try {
+    const r = await post(`/api/commitments/${id}/draft`);
+    box.value = r.message;
+    // Links are rebuilt from the box, so edits to the draft are what gets sent.
+    const link = kind => kind === "wa" ? "https://wa.me/?text=" + encodeURIComponent(box.value)
+      : r.links.email.replace(/body=[^&]*$/, "body=" + encodeURIComponent(box.value));
+    $("send-wa").hidden = c.source === "email";
+    $("send-mail").hidden = !r.links.email;
+    $("send-wa").onclick = () => window.open(link("wa"), "_blank");
+    $("send-mail").onclick = () => { location.href = link("mail"); };
+  } catch (e) { box.value = "Couldn't draft: " + e.message; }
+}
+$("copy").onclick = async () => {
+  await navigator.clipboard.writeText($("dlg-text").value);
+  $("copy").textContent = "Copied";
+  setTimeout(() => $("copy").textContent = "Copy", 1200);
+};
+$("askform").onsubmit = async e => {
+  e.preventDefault();
+  const q = $("q").value.trim(), box = $("answer");
+  if (!q) return;
+  box.style.display = "block"; box.textContent = "Looking through your promises…";
+  try {
+    const r = await post("/api/ask", {question: q});
+    // Show the agent's work: which local tools Nemotron chose to call.
+    const calls = (r.tools || []).map(t => {
+      const args = Object.entries(t.args || {}).map(([k, v]) => `${k}=${JSON.stringify(v)}`).join(", ");
+      return `<code>${esc(t.tool)}(${esc(args)})</code>`;
+    }).join(" ");
+    box.innerHTML = esc(r.answer).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+      .replace(/\[#(\d+)\]/g, (m, id) => `<span class="ref" onclick="jump(${id})">#${id}</span>`) +
+      (calls ? `<div class="tools">NVIDIA Nemotron agent called: ${calls}</div>` : "");
+  } catch (err) { box.textContent = "Couldn't answer: " + err.message; }
+};
+function jump(id) {
+  const c = state.commitments.find(x => x.id === id);
+  if (c && c.status !== show) { show = c.status; render(); }
+  const el = $("c" + id);
+  if (el) { el.scrollIntoView({behavior: "smooth", block: "center"}); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600); }
+}
+// A link like …/#ask=Who owes me money? opens with that question answered.
+if (location.hash.startsWith("#ask=")) {
+  addEventListener("load", () => setTimeout(() => {
+    $("q").value = decodeURIComponent(location.hash.slice(5)); $("askform").requestSubmit();
+  }, 300));
+}
+file.onchange = () => upload([...file.files]);
+let depth = 0;
+addEventListener("dragenter", e => { e.preventDefault(); depth++; $("drop").classList.add("on"); });
+addEventListener("dragleave", () => { if (--depth <= 0) { depth = 0; $("drop").classList.remove("on"); } });
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => { e.preventDefault(); depth = 0; $("drop").classList.remove("on"); upload([...e.dataTransfer.files]); });
+load();
+</script>
+</body>
+</html>

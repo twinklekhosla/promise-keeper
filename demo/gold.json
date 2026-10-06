@@ -1,0 +1,22 @@
+[
+ {"thread": "Rohit Sharma", "owner": "me", "what": "Send the pitch deck", "due": "2026-09-17", "status": "done"},
+ {"thread": "Rohit Sharma", "owner": "them", "what": "Show the deck to his cousin at the accelerator", "due": null, "status": "open"},
+ {"thread": "Rohit Sharma", "owner": "me", "what": "Book the Coorg homestay", "due": "2026-09-28", "status": "open"},
+ {"thread": "Rohit Sharma", "owner": "them", "what": "Forward the deck to Kunal", "due": "2026-09-18", "status": "open"},
+ {"thread": "Rohit Sharma", "owner": "them", "what": "Arrange the car for Coorg", "due": null, "status": "open"},
+ {"thread": "Rohit Sharma", "owner": "them", "what": "Send the trip itinerary", "due": "2026-09-20", "status": "done"},
+ {"thread": "Maa", "owner": "me", "what": "Order papa's BP medicine on Amazon", "due": "2026-09-20", "status": "done"},
+ {"thread": "Maa", "owner": "me", "what": "Video call Maa", "due": "2026-10-03", "status": "open"},
+ {"thread": "Suresh Landlord", "owner": "them", "what": "Send the plumber to fix the geyser", "due": "2026-09-28", "status": "open"},
+ {"thread": "Suresh Landlord", "owner": "me", "what": "Transfer October rent", "due": "2026-10-05", "status": "open"},
+ {"thread": "Ishita", "owner": "them", "what": "Send the Goa photos drive link", "due": "2026-10-01", "status": "open"},
+ {"thread": "Ishita", "owner": "me", "what": "Review Ishita's resume", "due": "2026-09-27", "status": "done"},
+ {"thread": "Sunday Cricket", "owner": "me", "what": "Bring the stumps and the new ball", "due": "2026-10-03", "status": "open"},
+ {"thread": "Sunday Cricket", "owner": "them", "what": "Book the turf", "due": "2026-09-29", "status": "done"},
+ {"thread": "Email: Revised quote for 2BHK interiors", "owner": "them", "what": "Send the revised interiors quote", "due": "2026-09-28", "status": "open"},
+ {"thread": "Email: Revised quote for 2BHK interiors", "owner": "me", "what": "Send the floor plan PDF", "due": "2026-09-22", "status": "done"},
+ {"thread": "Email: October book club", "owner": "me", "what": "Share a shortlist of 3 books", "due": "2026-09-30", "status": "open"},
+ {"thread": "Email: October book club", "owner": "them", "what": "Book the cafe table", "due": "2026-09-27", "status": "done"},
+ {"thread": "Email: Policy renewal documents", "owner": "them", "what": "Email the renewal documents", "due": "2026-09-25", "status": "done"},
+ {"thread": "Email: Policy renewal documents", "owner": "me", "what": "Send the signed proposal form", "due": "2026-10-02", "status": "open"}
+]

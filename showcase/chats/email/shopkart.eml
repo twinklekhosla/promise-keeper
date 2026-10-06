@@ -1,0 +1,14 @@
+From: ShopKart <orders@shopkart.example>
+To: Aarav Mehta <aarav.mehta@example.com>
+Subject: Your order has shipped
+Date: Tue, 06 Oct 2026 09:00:00 +0530
+Message-ID: <179074057386.66015.2011087856117948400@example.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+
+Hi Aarav,
+
+Good news! Your order SK88231 has shipped and will be delivered by 12 October.
+
+Team ShopKart

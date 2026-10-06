@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#44526a"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#f6f5f1"/>
+  <text x="60" y="72" font-size="38" font-weight="700" fill="#1d1d1b">Promise Keeper</text>
+  <text x="60" y="110" font-size="21" fill="#6b6a64">A private AI that remembers every promise in your chats</text>
+
+  <!-- On your Mac boundary -->
+  <rect x="40" y="150" width="1000" height="700" rx="22" fill="#ffffff" stroke="#c9c6bb" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="70" y="192" font-size="20" font-weight="700" fill="#15803d">ON YOUR MAC · data never leaves unless shown</text>
+
+  <!-- Sources -->
+  <g font-size="18" fill="#1d1d1b">
+    <rect x="70" y="225" width="250" height="64" rx="12" fill="#e7f5ec" stroke="#9fd3b0"/>
+    <text x="95" y="264">WhatsApp .txt / iPhone .zip</text>
+    <rect x="70" y="305" width="250" height="64" rx="12" fill="#e7f5ec" stroke="#9fd3b0"/>
+    <text x="95" y="344">Email .eml / Gmail .mbox</text>
+  </g>
+
+  <!-- Parse -->
+  <rect x="380" y="225" width="300" height="144" rx="14" fill="#f3f1ea" stroke="#c9c6bb"/>
+  <text x="400" y="258" font-size="19" font-weight="700" fill="#1d1d1b">Parse locally</text>
+  <text x="400" y="288" font-size="15.5" fill="#44423d">drops system lines, media, newsletters</text>
+  <text x="400" y="312" font-size="15.5" fill="#44423d">day/month order detected</text>
+  <text x="400" y="336" font-size="15.5" fill="#44423d">recognises which sender is you</text>
+
+  <!-- Select + mask -->
+  <rect x="740" y="225" width="270" height="144" rx="14" fill="#f3f1ea" stroke="#c9c6bb"/>
+  <text x="760" y="258" font-size="19" font-weight="700" fill="#1d1d1b">Select + mask</text>
+  <text x="760" y="288" font-size="15.5" fill="#44423d">only promise-like lines</text>
+  <text x="760" y="312" font-size="15.5" fill="#44423d">(EN · Hinglish · हिन्दी) + context</text>
+  <text x="760" y="336" font-size="15.5" fill="#44423d">phones, emails, IDs masked</text>
+
+  <!-- Code checks -->
+  <rect x="380" y="430" width="630" height="160" rx="14" fill="#fdf6dc" stroke="#e6cf7a"/>
+  <text x="400" y="464" font-size="19" font-weight="700" fill="#1d1d1b">Code checks around the model</text>
+  <text x="400" y="494" font-size="15.5" fill="#44423d">• owner = who sent the message · promises made to someone else in a group dropped</text>
+  <text x="400" y="518" font-size="15.5" fill="#44423d">• only a later message closes a promise · reschedules merge, follow-ups don't</text>
+  <text x="400" y="542" font-size="15.5" fill="#44423d">• dates sanity-checked (weekday, never before the promise, never invented)</text>
+  <text x="400" y="566" font-size="15.5" fill="#44423d">• budget cap + local cache · cut-off answers retried on half the messages</text>
+
+  <!-- Store + outputs -->
+  <rect x="70" y="430" width="250" height="160" rx="14" fill="#e8eff6" stroke="#9db7d3"/>
+  <text x="95" y="468" font-size="19" font-weight="700" fill="#1d1d1b">SQLite</text>
+  <text x="95" y="498" font-size="15.5" fill="#44423d">messages, promises,</text>
+  <text x="95" y="522" font-size="15.5" fill="#44423d">money, spend ledger</text>
+  <text x="95" y="546" font-size="15.5" fill="#44423d">one local file</text>
+
+  <g font-size="17" fill="#1d1d1b">
+    <rect x="70" y="650" width="220" height="150" rx="14" fill="#ffffff" stroke="#c9c6bb"/>
+    <text x="90" y="686" font-weight="700">Dashboard</text>
+    <text x="90" y="714" font-size="15" fill="#44423d">I promised / owed to me</text>
+    <text x="90" y="738" font-size="15" fill="#44423d">₹ owed · late badges</text>
+    <text x="90" y="762" font-size="15" fill="#44423d">drag-and-drop import</text>
+    <rect x="310" y="650" width="220" height="150" rx="14" fill="#ffffff" stroke="#c9c6bb"/>
+    <text x="330" y="686" font-weight="700">Ask</text>
+    <text x="330" y="714" font-size="15" fill="#44423d">"Who owes me money?"</text>
+    <text x="330" y="738" font-size="15" fill="#44423d">agent with local tools</text>
+    <rect x="550" y="650" width="220" height="150" rx="14" fill="#ffffff" stroke="#c9c6bb"/>
+    <text x="570" y="686" font-weight="700">One-tap follow-up</text>
+    <text x="570" y="714" font-size="15" fill="#44423d">draft in the chat's tone</text>
+    <text x="570" y="738" font-size="15" fill="#44423d">→ WhatsApp / Mail</text>
+    <rect x="790" y="650" width="220" height="150" rx="14" fill="#ffffff" stroke="#c9c6bb"/>
+    <text x="810" y="686" font-weight="700">Always on</text>
+    <text x="810" y="714" font-size="15" fill="#44423d">watches your exports</text>
+    <text x="810" y="738" font-size="15" fill="#44423d">morning digest</text>
+    <text x="810" y="762" font-size="15" fill="#44423d">macOS · Telegram</text>
+  </g>
+
+  <!-- Nebius -->
+  <rect x="1120" y="225" width="440" height="365" rx="22" fill="#1f2d3d"/>
+  <text x="1150" y="268" font-size="22" font-weight="700" fill="#ffffff">Nebius Token Factory</text>
+  <text x="1150" y="296" font-size="16" fill="#a9bbd0">open models, structured JSON, 4 chats in parallel</text>
+  <rect x="1150" y="320" width="380" height="120" rx="14" fill="#76b900"/>
+  <text x="1170" y="356" font-size="20" font-weight="700" fill="#0b1a00">NVIDIA Nemotron 3 Super</text>
+  <text x="1170" y="386" font-size="16" fill="#0b1a00">find promises · who, what, by when, ₹</text>
+  <text x="1170" y="410" font-size="16" fill="#0b1a00">drafts · Ask agent (tool calling)</text>
+  <rect x="1150" y="455" width="380" height="110" rx="14" fill="#9bd32b"/>
+  <text x="1170" y="491" font-size="20" font-weight="700" fill="#0b1a00">NVIDIA Nemotron 3 Ultra</text>
+  <text x="1170" y="521" font-size="16" fill="#0b1a00">was it kept? late? rescheduled?</text>
+  <text x="1170" y="545" font-size="16" fill="#0b1a00">(where a mistake means a false nag)</text>
+
+  <!-- Arrows -->
+  <g stroke="#44526a" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M320 297 L378 297"/>
+    <path d="M680 297 L738 297"/>
+    <path d="M1010 285 L1118 285"/>
+    <path d="M1118 520 L1012 520"/>
+    <path d="M380 510 L322 510"/>
+    <path d="M195 590 L195 648"/>
+    <path d="M320 560 C 420 610, 420 620, 420 648"/>
+  </g>
+  <text x="1028" y="272" font-size="14" fill="#44526a">masked lines</text>
+  <text x="1030" y="545" font-size="14" fill="#44526a">JSON</text>
+
+  <!-- Results strip -->
+  <rect x="1120" y="620" width="440" height="230" rx="22" fill="#ffffff" stroke="#c9c6bb" stroke-width="2"/>
+  <text x="1150" y="662" font-size="20" font-weight="700" fill="#1d1d1b">On a noisy everyday inbox</text>
+  <text x="1150" y="690" font-size="15" fill="#6b6a64">hand-labelled, 3 fresh runs</text>
+  <text x="1150" y="738" font-size="34" font-weight="700" fill="#15803d">98%</text>
+  <text x="1250" y="736" font-size="16" fill="#1d1d1b">of promises found</text>
+  <text x="1150" y="784" font-size="34" font-weight="700" fill="#15803d">0</text>
+  <text x="1250" y="782" font-size="16" fill="#1d1d1b">false alarms</text>
+  <text x="1150" y="830" font-size="34" font-weight="700" fill="#15803d">100%</text>
+  <text x="1250" y="828" font-size="16" fill="#1d1d1b">kept / late status right</text>
+</svg>
