@@ -14,18 +14,20 @@
 
   <!-- Sources -->
   <g font-size="18" fill="#1d1d1b">
-    <rect x="70" y="225" width="250" height="64" rx="12" fill="#e7f5ec" stroke="#9fd3b0"/>
-    <text x="95" y="264">WhatsApp .txt / iPhone .zip</text>
-    <rect x="70" y="305" width="250" height="64" rx="12" fill="#e7f5ec" stroke="#9fd3b0"/>
-    <text x="95" y="344">Email .eml / Gmail .mbox</text>
+    <rect x="70" y="225" width="250" height="42" rx="11" fill="#c9ecd5" stroke="#15803d" stroke-width="2"/>
+    <text x="88" y="252" font-weight="700" fill="#15803d">● WhatsApp for Mac · live</text>
+    <rect x="70" y="276" width="250" height="42" rx="11" fill="#e7f5ec" stroke="#9fd3b0"/>
+    <text x="88" y="303">WhatsApp .txt / iPhone .zip</text>
+    <rect x="70" y="327" width="250" height="42" rx="11" fill="#e7f5ec" stroke="#9fd3b0"/>
+    <text x="88" y="354">Email .eml / Gmail .mbox</text>
   </g>
 
   <!-- Parse -->
   <rect x="380" y="225" width="300" height="144" rx="14" fill="#f3f1ea" stroke="#c9c6bb"/>
   <text x="400" y="258" font-size="19" font-weight="700" fill="#1d1d1b">Parse locally</text>
-  <text x="400" y="288" font-size="15.5" fill="#44423d">drops system lines, media, newsletters</text>
-  <text x="400" y="312" font-size="15.5" fill="#44423d">day/month order detected</text>
-  <text x="400" y="336" font-size="15.5" fill="#44423d">recognises which sender is you</text>
+  <text x="400" y="288" font-size="15.5" fill="#44423d">live: picked chats only, read-only,</text>
+  <text x="400" y="312" font-size="15.5" fill="#44423d">delta (only new rows), within seconds</text>
+  <text x="400" y="336" font-size="15.5" fill="#44423d">drops system lines, media, newsletters</text>
 
   <!-- Select + mask -->
   <rect x="740" y="225" width="270" height="144" rx="14" fill="#f3f1ea" stroke="#c9c6bb"/>
@@ -65,9 +67,10 @@
     <text x="570" y="738" font-size="15" fill="#44423d">→ WhatsApp / Mail</text>
     <rect x="790" y="650" width="220" height="150" rx="14" fill="#ffffff" stroke="#c9c6bb"/>
     <text x="810" y="686" font-weight="700">Always on</text>
-    <text x="810" y="714" font-size="15" fill="#44423d">watches your exports</text>
-    <text x="810" y="738" font-size="15" fill="#44423d">morning digest</text>
-    <text x="810" y="762" font-size="15" fill="#44423d">macOS · Telegram</text>
+    <text x="810" y="714" font-size="15" fill="#44423d">follows WhatsApp live</text>
+    <text x="810" y="738" font-size="15" fill="#44423d">page refreshes on change</text>
+    <text x="810" y="762" font-size="15" fill="#44423d">morning digest</text>
+    <text x="810" y="786" font-size="15" fill="#44423d">macOS · Telegram</text>
   </g>
 
   <!-- Nebius -->

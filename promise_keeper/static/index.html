@@ -478,7 +478,7 @@ $("askform").onsubmit = async e => {
       const args = Object.entries(t.args || {}).map(([k, v]) => `${k}=${JSON.stringify(v)}`).join(", ");
       return `<code>${esc(t.tool)}(${esc(args)})</code>`;
     }).join(" ");
-    box.innerHTML = esc(r.answer).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    box.innerHTML = esc(r.answer).replace(/^\s*[-*] /gm, "• ").replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
       .replace(/\[#(\d+)\]/g, (m, id) => `<span class="ref" onclick="jump(${id})">#${id}</span>`) +
       (calls ? `<div class="tools">NVIDIA Nemotron agent called: ${calls}</div>` : "");
   } catch (err) { box.textContent = "Couldn't answer: " + err.message; }

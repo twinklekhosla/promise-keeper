@@ -68,6 +68,7 @@ DRAFT_SYSTEM = """You write one short message for ME to send in an existing conv
 Match the language and tone of the conversation (Hinglish if they write Hinglish, formal for work email).
 Sound like a real person, not a bot. At most 60 words. No subject line, no placeholders like [Name].
 Never invent facts, reasons or plans that aren't in the conversation (no "I need it for a project").
+No excuses either ("got caught up", "was busy", "it slipped my mind") unless the conversation gives one.
 
 Cases:
 - ME promised and it's late: own it briefly and give a concrete new time within 2 days.
