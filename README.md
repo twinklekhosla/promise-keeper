@@ -39,6 +39,41 @@ awkward. For anything late, it drafts the follow-up in the tone of that conversa
 - **Learns what you don't care about.** "Not a promise" hides an item and shows it to the model as an
   example to skip next time. Items that go quiet for 30 days retire to an "Old" tab instead of nagging.
 
+## NVIDIA Nemotron on Nebius Token Factory
+
+Every AI step runs on open NVIDIA Nemotron models, served by
+[Nebius Token Factory](https://tokenfactory.nebius.com) through its OpenAI-compatible API
+(`https://api.tokenfactory.nebius.com/v1`).
+
+| Job | Model | How it's called |
+|---|---|---|
+| Find promises: who, what, to whom, by when, amount | **Nemotron 3 Super** (`nvidia/nemotron-3-super-120b-a12b`) | JSON mode, temperature 0 |
+| Decide kept / dropped / rescheduled | **Nemotron 3 Ultra** (`nvidia/Nemotron-3-Ultra-550b-a55b`) | JSON mode, temperature 0 |
+| Write follow-ups in the chat's own tone | Nemotron 3 Super | JSON mode |
+| Ask agent ("who owes me money?") | Nemotron 3 Super | tool calling: `find_promises`, `money_summary`, `search_messages`, run locally |
+
+Super does the high-volume reading. Ultra gets the one judgment where a mistake hurts most, a false "3 days
+late" about something you already did, and those calls are few and small. Both are set in `.env`
+(`PK_MODEL`, `PK_TRACK_MODEL`), so trying another Nemotron model is a one-line change.
+
+**Where Token Factory sped up the work**
+
+- **No GPUs to run.** Two large open models (120B and 550B parameters, mixture-of-experts) behind one API
+  key. We spent the time on the product, not on serving.
+- **One endpoint, two models.** Giving the "was it kept?" step to Ultra while Super does the rest was a change
+  of model name, not a second deployment.
+- **Structured output and tool calling built in.** JSON mode gives every extraction a fixed shape the code
+  checks rely on. Native tool calling made the Ask agent a short loop instead of prompt parsing.
+- **Fast, cheap iteration.** Chats are scanned four at a time, so a full scan of a test inbox takes about 30
+  seconds and costs about $0.05. That made it practical to re-run the benchmark after every change: about
+  1,250 Nemotron calls and roughly $3 of credit across the whole build, logged locally per call.
+- **Fast enough for live sync.** When a new WhatsApp message arrives, Ultra closes a kept promise in about
+  2 to 4 seconds, and Super finds a new promise in roughly 7 to 19 seconds.
+- **Per-token pricing we could enforce.** Token Factory's published prices are in `config.py`; every call's
+  cost is written to a local ledger, and the app refuses calls once `PK_BUDGET_USD` is reached.
+
+Nebius services used: **Token Factory** (model inference) only. Everything else runs on your own machine.
+
 ## Everyday use
 
 1. `python -m promise_keeper serve` and open http://127.0.0.1:8765
